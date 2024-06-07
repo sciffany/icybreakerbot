@@ -31,11 +31,64 @@ bot.hears(/join (.*)$/, async (ctx) => {
   await ctx.reply(`Added ${name} to the game!`);
 });
 
+bot.hears(/award (.*)$/, async (ctx) => {
+  const name = ctx.match[1];
+
+  const chatId = ctx.chat.id;
+  const peopleDocs = query(collection(db, `chats/${chatId}/people`));
+  const querySnapshot = await getDocs(peopleDocs);
+  const peopleList = querySnapshot.docs;
+  const person = peopleList.find(
+    (person) => person.data().name.toLowerCase() === name.toLowerCase()
+  );
+
+  if (!person) {
+    await ctx.reply(`Could not find ${name} in the game.`);
+    return;
+  }
+
+  const personRef = doc(db, `chats/${chatId}/scores/${person.id}`);
+  const personDoc = await getDoc(personRef);
+  const score = personDoc.exists() ? personDoc.data().score : 0;
+
+  await setDoc(personRef, { score: score + 100 }, { merge: true });
+
+  await ctx.reply(`Awarded 100 points to ${name}!`);
+
+  const scoresDocs = query(collection(db, `chats/${chatId}/scores`));
+  const scoresQuerySnapshot = await getDocs(scoresDocs);
+  const scoresList = scoresQuerySnapshot.docs;
+  const scores = scoresList.map((score) => {
+    return `💎 ${
+      peopleList.find((person) => person.id === score.id)?.data().name
+    } - ${score.data().score}`;
+  });
+
+  await ctx.reply(`Scores:\n${scores.join("\n")}`);
+});
+
+bot.hears(/scores$/, async (ctx) => {
+  const chatId = ctx.chat.id;
+  const peopleDocs = query(collection(db, `chats/${chatId}/people`));
+  const querySnapshot = await getDocs(peopleDocs);
+  const peopleList = querySnapshot.docs;
+
+  const scoresDocs = query(collection(db, `chats/${chatId}/scores`));
+  const scoresQuerySnapshot = await getDocs(scoresDocs);
+  const scoresList = scoresQuerySnapshot.docs;
+  const scores = scoresList.map((score) => {
+    return `💎 ${
+      peopleList.find((person) => person.id === score.id)?.data().name
+    } - ${score.data().score}`;
+  });
+
+  await ctx.reply(`Scores:\n${scores.join("\n")}`);
+});
+
 bot.hears(/start$/, async (ctx) => {
   const chatId = ctx.chat.id;
   const q = query(collection(db, `chats/${chatId}/people`));
   const querySnapshot = await getDocs(q);
-
   const peopleList = querySnapshot.docs;
 
   const person = peopleList[Math.floor(Math.random() * peopleList.length)];
