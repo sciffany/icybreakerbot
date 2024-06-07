@@ -1,46 +1,88 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+var __awaiter =
+  (this && this.__awaiter) ||
+  function (thisArg, _arguments, P, generator) {
+    function adopt(value) {
+      return value instanceof P
+        ? value
+        : new P(function (resolve) {
+            resolve(value);
+          });
+    }
     return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
+      function fulfilled(value) {
+        try {
+          step(generator.next(value));
+        } catch (e) {
+          reject(e);
+        }
+      }
+      function rejected(value) {
+        try {
+          step(generator["throw"](value));
+        } catch (e) {
+          reject(e);
+        }
+      }
+      function step(result) {
+        result.done
+          ? resolve(result.value)
+          : adopt(result.value).then(fulfilled, rejected);
+      }
+      step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-};
+  };
 Object.defineProperty(exports, "__esModule", { value: true });
 const firestore_1 = require("firebase/firestore");
 const firebase_1 = require("./src/firebase");
 const telegraf_1 = require("telegraf");
 require("dotenv").config();
 const bot = new telegraf_1.Telegraf(process.env.TELEGRAM_API_KEY);
-bot.help((ctx) => ctx.reply("I help break the ice 🧊 by asking trivia questions about a person. To add a person, type /join <name>. To start the game, type /start. I will ask questions, and you can each guess trivia about the chosen person. Don't forget to use spoilers for your answer!"));
+bot.help((ctx) =>
+  ctx.reply(
+    "I help break the ice 🧊 by asking trivia questions about a person. To add a person, type /join <name>. To start the game, type /start. I will ask questions, and you can each guess trivia about the chosen person. Don't forget to use spoilers for your answers!"
+  )
+);
 bot.launch();
-bot.hears(/join (.*)$/, (ctx) => __awaiter(void 0, void 0, void 0, function* () {
+bot.hears(/join (.*)$/, (ctx) =>
+  __awaiter(void 0, void 0, void 0, function* () {
     const name = ctx.match[1];
     const chatId = ctx.chat.id;
-    yield (0, firestore_1.setDoc)((0, firestore_1.doc)(firebase_1.db, `chats/${chatId}/people/${ctx.message.from.id}`), {
-        name,
+    yield (0,
+    firestore_1.setDoc)((0, firestore_1.doc)(firebase_1.db, `chats/${chatId}/people/${ctx.message.from.id}`), {
+      name,
     });
     yield ctx.reply(`Added ${name} to the game!`);
-}));
-bot.hears(/start$/, (ctx) => __awaiter(void 0, void 0, void 0, function* () {
+  })
+);
+bot.hears(/start$/, (ctx) =>
+  __awaiter(void 0, void 0, void 0, function* () {
     const chatId = ctx.chat.id;
-    const q = (0, firestore_1.query)((0, firestore_1.collection)(firebase_1.db, `chats/${chatId}/people`));
+    const q = (0, firestore_1.query)(
+      (0, firestore_1.collection)(firebase_1.db, `chats/${chatId}/people`)
+    );
     const querySnapshot = yield (0, firestore_1.getDocs)(q);
     const peopleList = querySnapshot.docs;
     const person = peopleList[Math.floor(Math.random() * peopleList.length)];
-    const question = listOfQuestions[Math.floor(Math.random() * listOfQuestions.length)];
-    yield ctx.reply(`Everybody guess: ${question.replace("{person}", person.data().name)} Make sure to use spoilers.`);
-}));
+    const question =
+      listOfQuestions[Math.floor(Math.random() * listOfQuestions.length)];
+    yield ctx.reply(
+      `Everybody guess: ${question.replace(
+        "{person}",
+        person.data().name
+      )} Make sure to use spoilers.`
+    );
+  })
+);
 // Enable graceful stop
 process.once("SIGINT", () => {
-    bot.stop("SIGINT");
+  bot.stop("SIGINT");
 });
 process.once("SIGTERM", () => {
-    bot.stop("SIGTERM");
+  bot.stop("SIGTERM");
 });
-const listOfQuestions = `Does {person} work from home or office or do hybrid work?
+const listOfQuestions =
+  `Does {person} work from home or office or do hybrid work?
 Who is {person}'s favorite anime character?
 What is {person}'s favorite anime?
 What would {person} likely go to jail for?
