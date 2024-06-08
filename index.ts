@@ -1,5 +1,4 @@
 import {
-  addDoc,
   collection,
   doc,
   getDoc,
@@ -20,10 +19,11 @@ bot.help((ctx) =>
 );
 bot.launch();
 
-bot.hears(/join (.*)$/, async (ctx) => {
+bot.hears(/\/join (.*)$/, async (ctx) => {
   const name = ctx.match[1];
 
   const chatId = ctx.chat.id;
+
   await setDoc(doc(db, `chats/${chatId}/people/${ctx.message.from.id}`), {
     name,
   });
@@ -31,7 +31,7 @@ bot.hears(/join (.*)$/, async (ctx) => {
   await ctx.reply(`Added ${name} to the game!`);
 });
 
-bot.hears(/award (.*)$/, async (ctx) => {
+bot.hears(/\/award (.*)$/, async (ctx) => {
   const name = ctx.match[1];
 
   const chatId = ctx.chat.id;
@@ -67,7 +67,7 @@ bot.hears(/award (.*)$/, async (ctx) => {
   await ctx.reply(`Scores:\n${scores.join("\n")}`);
 });
 
-bot.hears(/scores$/, async (ctx) => {
+bot.hears(/\/scores$/, async (ctx) => {
   const chatId = ctx.chat.id;
   const peopleDocs = query(collection(db, `chats/${chatId}/people`));
   const querySnapshot = await getDocs(peopleDocs);
@@ -85,13 +85,27 @@ bot.hears(/scores$/, async (ctx) => {
   await ctx.reply(`Scores:\n${scores.join("\n")}`);
 });
 
-bot.hears(/start$/, async (ctx) => {
+bot.hears(/\/start$/, async (ctx) => {
   const chatId = ctx.chat.id;
   const q = query(collection(db, `chats/${chatId}/people`));
   const querySnapshot = await getDocs(q);
   const peopleList = querySnapshot.docs;
 
-  const person = peopleList[Math.floor(Math.random() * peopleList.length)];
+  const sequenceNumberRef = await getDoc(doc(db, `chats/${chatId}`));
+  if (!sequenceNumberRef.data().number) {
+    await setDoc(doc(db, `chats/${chatId}`), { number: 0 }, { merge: true });
+  } else {
+    if (sequenceNumberRef.data().number + 1 >= peopleList.length) {
+      await setDoc(doc(db, `chats/${chatId}`), { number: 0 }, { merge: true });
+    }
+    await setDoc(
+      doc(db, `chats/${chatId}`),
+      { number: sequenceNumberRef.data().number + 1 },
+      { merge: true }
+    );
+  }
+  const sequenceNumberRef2 = await getDoc(doc(db, `chats/${chatId}`));
+  const person = peopleList[sequenceNumberRef2.data().number];
 
   const question =
     listOfQuestions[Math.floor(Math.random() * listOfQuestions.length)];
