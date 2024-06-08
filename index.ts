@@ -272,4 +272,11 @@ Does {person} have any pets?
 What was the first pet {person} had?
 How did {person} first get into their fave hobby?
 What was the last thing {person} read?
-What is {person}'s fave dog breed`.split("\n");
+What is {person}'s fave dog breed?
+What is {person}'s worst childhood memory?
+What is {person}'s favorite childhood toy?
+Does {person} watch anime or manga or none or both?
+Is {person} a cat person, a dog person or none or both?
+Does {person} have a tattoo?
+Has {person} ever dyed their hair?
+Does {person} watch dubbed or subbed movies or none or both?`.split("\n");
