@@ -95,12 +95,12 @@ bot.hears(/\/start$/, async (ctx) => {
   if (!sequenceNumberRef.data().hasOwnProperty("number")) {
     await setDoc(doc(db, `chats/${chatId}`), { number: 0 }, { merge: true });
   } else {
-    if ((sequenceNumberRef.data().number || 0) + 1 >= peopleList.length) {
+    if ((sequenceNumberRef.data().number || -1) + 1 >= peopleList.length) {
       await setDoc(doc(db, `chats/${chatId}`), { number: 0 }, { merge: true });
     }
     await setDoc(
       doc(db, `chats/${chatId}`),
-      { number: (sequenceNumberRef.data().number || 0) + 1 },
+      { number: (sequenceNumberRef.data().number || -1) + 1 },
       { merge: true }
     );
   }
