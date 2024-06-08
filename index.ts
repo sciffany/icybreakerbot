@@ -92,17 +92,24 @@ bot.hears(/\/start$/, async (ctx) => {
   const peopleList = querySnapshot.docs;
 
   const sequenceNumberRef = await getDoc(doc(db, `chats/${chatId}`));
-  if (!sequenceNumberRef.data() || !sequenceNumberRef.data().number) {
+  if (
+    !sequenceNumberRef.data() ||
+    sequenceNumberRef.data().number === undefined
+  ) {
+    console.log("A");
     await setDoc(doc(db, `chats/${chatId}`), { number: 0 }, { merge: true });
   } else {
-    if ((sequenceNumberRef.data().number || -1) + 1 >= peopleList.length) {
+    if (sequenceNumberRef.data().number + 1 == peopleList.length) {
+      console.log("B");
       await setDoc(doc(db, `chats/${chatId}`), { number: 0 }, { merge: true });
+    } else {
+      console.log("C");
+      await setDoc(
+        doc(db, `chats/${chatId}`),
+        { number: sequenceNumberRef.data().number + 1 },
+        { merge: true }
+      );
     }
-    await setDoc(
-      doc(db, `chats/${chatId}`),
-      { number: (sequenceNumberRef.data().number || -1) + 1 },
-      { merge: true }
-    );
   }
   const sequenceNumberRef2 = await getDoc(doc(db, `chats/${chatId}`));
   const person = peopleList[sequenceNumberRef2.data().number];
