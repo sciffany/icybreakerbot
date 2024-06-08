@@ -92,7 +92,7 @@ bot.hears(/\/start$/, async (ctx) => {
   const peopleList = querySnapshot.docs;
 
   const sequenceNumberRef = await getDoc(doc(db, `chats/${chatId}`));
-  if (!sequenceNumberRef.data().hasOwnProperty("number")) {
+  if (!sequenceNumberRef.data() || !sequenceNumberRef.data().number) {
     await setDoc(doc(db, `chats/${chatId}`), { number: 0 }, { merge: true });
   } else {
     if ((sequenceNumberRef.data().number || -1) + 1 >= peopleList.length) {
