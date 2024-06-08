@@ -112,27 +112,24 @@ process.once("SIGTERM", () => {
   bot.stop("SIGTERM");
 });
 
-const listOfQuestions =
-  `Does {person} work from home or office or do hybrid work?
-Who is {person}'s favorite anime character?
+const listOfQuestions = `Who is {person}'s favorite anime character?
 What is {person}'s favorite anime?
 What would {person} likely go to jail for?
-Is {person} likely to get lost?
 What would {person} be likely to be famous for?
 Does {person} like their current job?
 What is {person}'s love language?
-What side hustle did {person} think about doing?
-What is {person}'s career goal?
+What side hustle did {person} think about doing or did?
+What is {person}'s future career goal?
 What does {person} often wear to work?
 What are three adjectives people would use to describe {person}?
 How would {person} describe their younger siblings if any? 
 How would {person} describe their older siblings if any? 
 What is a memory {person} had with their grandparents?
-What type of humor never makes {person} laugh?
+What type of humor never fails to make {person} laugh?
 Does {person} collect anything?
 What is the last concert {person} has gone to if any?
 What cause is {person} most passionate about?
-What is the bravest thing {person} has done?
+What is one brave thing {person} has done?
 What is {person}'s enneagram type?
 What are musical instruments {person} can play if any?
 What simple thing does {person} derive joy in?
@@ -143,7 +140,7 @@ How does {person} calm themselves down?
 What does {person} nerd out about?
 What podcast does {person} listen to?
 What is {person}'s fave type of cuisine?
-Is {person} a daytime or night owl?
+Is {person} a morning person or night owl?
 What is {person}'s favorite type of music?
 What is {person}'s least favorite type of music?
 What is {person}'s favorite band?
@@ -163,8 +160,6 @@ What does {person} eat for breakfast?
 What does {person} most often do in their free time?
 How many languages does {person} speak?
 What language does {person} most want to learn right now?
-How many official relationships has {person} had?
-Is {person} attached right now?
 What is the latest thing {person} tried to learn?
 What is {person} looking forward to this weekend?
 How did {person} spend the last weekend?
@@ -242,7 +237,6 @@ What is {person}'s most unusual habit?
 What is {person}'s favorite family tradition?
 What was {person}'s best birthday ever?
 What was {person}'s best birthday present ever?
-What is {person}'s pet peeve?
 What is {person}'s favorite way to spend time with friends?
 What is {person}'s favorite thing about their job?
 What is {person}'s least favorite thing about their job?
@@ -256,4 +250,5 @@ What is {person}'s type?
 Does {person} have any pets?
 What was the first pet {person} had?
 How did {person} first get into their fave hobby?
-What was the last thing {person} read?`.split("\n");
+What was the last thing {person} read?
+What is {person}'s fave dog breed`.split("\n");
